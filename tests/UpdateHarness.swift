@@ -48,7 +48,10 @@ final class FixtureDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
 let args = CommandLine.arguments
 precondition(args.count >= 3)
 let app = URL(fileURLWithPath: args[1]).standardizedFileURL
-precondition(app.path.contains("/storage-atlas/.local/updater-e2e-"), "Only disposable fixture apps may be updated")
+precondition(args.count >= 5, "Explicit disposable fixture root required")
+let fixtureRoot = URL(fileURLWithPath: args[4]).resolvingSymlinksInPath()
+precondition(fixtureRoot.deletingLastPathComponent().lastPathComponent == ".local" && fixtureRoot.lastPathComponent.range(of: "^updater-e2e-[0-9a-f]{12}$", options: .regularExpression) != nil, "Invalid disposable fixture root")
+precondition(app.resolvingSymlinksInPath().path.hasPrefix(fixtureRoot.path + "/") && FileManager.default.fileExists(atPath: fixtureRoot.appendingPathComponent(".fixture-owner").path), "Only owned disposable fixture apps may be updated")
 let output = URL(fileURLWithPath: args[2])
 let driver = FixtureDriver(target: Bundle(url: app)!, output: output)
 let application = NSApplication.shared

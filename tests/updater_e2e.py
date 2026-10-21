@@ -5,7 +5,7 @@ Never link the automatic-confirmation driver into the shipped product.
 import argparse,hashlib,http.server,json,pathlib,plistlib,shutil,subprocess,threading,time,uuid
 R=pathlib.Path(__file__).resolve().parents[1]
 p=argparse.ArgumentParser();p.add_argument('--pre-signing',action='store_true');p.add_argument('--public',action='store_true');args=p.parse_args()
-D=R/('.local/updater-e2e-'+uuid.uuid4().hex[:12]);D.mkdir(parents=True)
+D=R/('.local/updater-e2e-'+uuid.uuid4().hex[:12]);D.mkdir(parents=True);(D/'.fixture-owner').write_text('disposable updater fixture only\n')
 BASE=R/'.local/public-release-0.2.99/Storage Saver.app';NEW=R/'.local/public-release-0.3.1'
 H=D/'Harness.app';M=H/'Contents/MacOS';M.mkdir(parents=True)
 framework=H/'Contents/Frameworks/Sparkle.framework';shutil.copytree(NEW/'Storage Saver.app/Contents/Frameworks/Sparkle.framework',framework,symlinks=True)
@@ -31,7 +31,7 @@ def exercise(name,feed,success=False,current=False):
     folder=D/name;folder.mkdir();app=folder/'Storage Saver.app';shutil.copytree(NEW/'Storage Saver.app' if current else BASE,app,symlinks=True)
     before=plistlib.loads((app/'Contents/Info.plist').read_bytes())['CFBundleVersion']
     output=folder/'result.json'
-    with (folder/'driver.log').open('w') as log:subprocess.run([str(M/'Harness'),str(app),str(output),feed],stdout=log,stderr=subprocess.STDOUT,check=True,timeout=200)
+    with (folder/'driver.log').open('w') as log:subprocess.run([str(M/'Harness'),str(app),str(output),feed,str(D)],stdout=log,stderr=subprocess.STDOUT,check=True,timeout=200)
     result=json.loads(output.read_text());assert result['passed']==success,result
     after=plistlib.loads((app/'Contents/Info.plist').read_bytes())['CFBundleVersion']
     assert after==(plistlib.loads((NEW/'Storage Saver.app/Contents/Info.plist').read_bytes())['CFBundleVersion'] if success else before),(name,before,after)
