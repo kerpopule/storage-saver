@@ -446,6 +446,8 @@ fn open(cfg: &Config) -> Result<Connection> {
     )
     .context("No completed index yet. Run storage-atlas scan first.")
 }
+// libc block-count types differ: u32 on macOS, u64 on Linux.
+#[allow(clippy::useless_conversion)]
 pub fn capacity(root: &Path) -> Result<Value> {
     let c = CString::new(root.as_os_str().as_bytes())?;
     let mut s = std::mem::MaybeUninit::<libc::statvfs>::uninit();

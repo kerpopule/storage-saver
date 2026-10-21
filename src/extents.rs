@@ -1,5 +1,7 @@
 //! Measured union of physical data extents. Never infer physical usage from st_blocks.
-use anyhow::{Context, Result, bail};
+#[cfg(target_os = "macos")]
+use anyhow::Context;
+use anyhow::{Result, bail};
 use serde_json::{Value, json};
 use std::{
     collections::{HashMap, HashSet},
