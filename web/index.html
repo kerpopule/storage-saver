@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Storage Saver</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <aside>
+      <a class="brand" href="/" aria-label="Storage Saver home"
+        ><span class="logo">▦</span
+        ><span
+          >storage<span class="brand-light">saver</span
+          ><small>KNOW YOUR SPACE.</small></span
+        ></a
+      >
+      <div class="nav-label">WORKSPACE</div>
+      <nav aria-label="Main navigation">
+        <button data-view="overview" class="active">
+          <span aria-hidden="true">◉</span> Overview</button
+        ><button data-view="explore">
+          <span aria-hidden="true">▤</span> Explore storage</button
+        ><button data-view="recovery">
+          <span aria-hidden="true">↗</span> Recovery desk</button
+        ><button data-view="growth">
+          <span aria-hidden="true">⌁</span> What's growing</button
+        ><button data-view="duplicates">
+          <span aria-hidden="true">▧</span> Duplicate leads</button
+        ><button data-view="coverage">
+          <span aria-hidden="true">◎</span> Index & coverage
+        </button>
+      </nav>
+      <div class="agent-actions" aria-label="AI agent access">
+        <button id="invite-agent">＋ Invite an agent</button>
+        <button id="grant-ordinary">Allow ordinary access</button>
+        <button id="grant-elevated">Allow elevated access</button>
+        <button id="manage-grants">Manage permissions</button>
+      </div>
+      <div class="aside-bottom">
+        <span class="privacy-dot"></span> Local. Private. Yours.
+        <p>No cloud. No telemetry.<br />No automatic deletion.</p>
+        <code>storage-saver --json status</code
+        ><small>RUST ENGINE · OPEN SOURCE</small>
+      </div>
+    </aside>
+    <main id="main">
+      <header>
+        <div class="eyebrow">YOUR MACHINE, MAPPED</div>
+        <div class="header-line">
+          <h1 id="heading">A little room to breathe.</h1>
+          <button id="rescan" class="secondary">↻ &nbsp; Refresh index</button>
+        </div>
+        <p class="subtitle" id="subtitle">
+          See what takes space. Understand what matters. Reclaim with
+          confidence.
+        </p>
+      </header>
+      <div id="notice" role="status" aria-live="polite"></div>
+      <div id="scan-progress" class="scan-progress" hidden></div>
+      <section id="overview">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">LIVE FILESYSTEM CAPACITY</div>
+            <div class="free">
+              <span id="free">…</span><span class="free-label">available</span>
+            </div>
+            <p id="disk-caption">Reading filesystem capacity…</p>
+            <div class="disk-track"><div id="disk-used"></div></div>
+            <div class="track-label">
+              <span id="used-label">Used</span
+              ><span id="total-label">Total</span>
+            </div>
+          </div>
+          <div class="hero-note">
+            <span class="hero-icon">↗</span>
+            <h2>Make space.<br />Not mistakes.</h2>
+            <p>
+              Allocation is a clue, not a promise. Shared blocks and snapshots
+              change what you can actually recover.
+            </p>
+            <button id="find-recovery">
+              Find review candidates <span>→</span>
+            </button>
+          </div>
+        </div>
+        <div class="stats">
+          <article>
+            <span class="eyebrow">PHYSICAL MEASUREMENT</span
+            ><strong id="indexed">—</strong>
+            <p>Measure selected folders. Shared blocks counted once; unmeasured totals stay unknown.</p>
+          </article>
+          <article>
+            <span class="eyebrow">FILES MAPPED</span
+            ><strong id="file-count">—</strong>
+            <p id="directory-count">Building your first map</p>
+          </article>
+          <article>
+            <span class="eyebrow">INDEX FRESHNESS</span
+            ><strong id="freshness">—</strong>
+            <p id="fresh-detail">Live capacity updates every 5 seconds</p>
+          </article>
+        </div>
+        <section class="panel categories-panel">
+          <div class="section-heading">
+            <div>
+              <h2>Files by category</h2>
+              <p>
+                File counts, not a physical-usage pie chart. Shared storage must be measured.
+              </p>
+            </div>
+            <span class="pill">METADATA ONLY</span>
+          </div>
+          <div id="category-bar" class="category-bar"></div>
+          <div id="categories" class="categories"></div>
+        </section>
+      </section>
+      <section id="workspace" class="panel">
+        <div class="section-heading">
+          <div>
+            <h2 id="list-title">Where the space lives</h2>
+            <p id="list-note">
+              Open a folder to follow its footprint. Nested totals overlap.
+            </p>
+          </div>
+          <label class="search"
+            ><span>⌕</span
+            ><input
+              id="search"
+              type="search"
+              aria-label="Search indexed paths"
+              placeholder="Search paths…"
+              autocomplete="off"
+          /></label>
+        </div>
+        <div id="toolbar">
+          <button id="up" class="secondary">↑ Parent</button
+          ><button id="root" class="secondary">Scan root</button
+          ><select id="sort-mode" aria-label="View type">
+            <option value="browse">Folder contents</option>
+            <option value="dirs">Largest folders</option>
+            <option value="files">Largest files</option></select
+          ><span id="breadcrumb" class="path"></span>
+        </div>
+        <div id="rows" class="rows" aria-live="polite">
+          <div class="empty">Your map is loading…</div>
+        </div>
+        <div class="pagination">
+          <button id="prev" class="secondary">← Previous</button
+          ><span id="page-label"></span
+          ><button id="next" class="secondary">Next →</button>
+        </div>
+      </section>
+      <section id="special" class="panel" hidden></section>
+      <footer>
+        <span>Storage Saver <b>·</b> Read-only index · edits only by grant</span
+        ><span id="footer-status">Waiting for index</span>
+      </footer>
+    </main>
+    <dialog id="agent-invitation" aria-labelledby="invite-title">
+      <div class="dialog-head"><h2 id="invite-title">Invite an agent</h2><button id="close-invitation" aria-label="Close invitation">✕</button></div>
+      <p>Paste into an AI harness running on this Mac or an authorized shell. This invitation shares the read-only index, not file-edit access.</p>
+      <textarea id="invitation-text" readonly aria-label="Agent connection instructions" rows="16"></textarea>
+      <div class="dialog-actions"><button id="copy-invitation">Copy invitation</button></div>
+    </dialog>
+    <dialog id="dossier">
+      <div class="dialog-head">
+        <span class="eyebrow">RECOVERY DOSSIER</span
+        ><button id="close-dialog" aria-label="Close dossier">✕</button>
+      </div>
+      <h2>Review before reclaim.</h2>
+      <p id="plan-path" class="path"></p>
+      <div id="plan-content"></div>
+      <div class="dialog-actions">
+        <button id="copy-plan" class="secondary">Copy JSON</button
+        ><button id="download-plan">Save dossier</button>
+      </div>
+    </dialog>
+  </body>
+</html>

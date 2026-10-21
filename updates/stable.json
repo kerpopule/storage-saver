@@ -1,0 +1,7 @@
+{
+  "version": "0.3.1",
+  "build": "8",
+  "feed": "https://www.storagesaver.app/updates/stable.xml",
+  "minimum_system_version": "27.0",
+  "notes": "One elevated authorization per scoped session, plus signed in-app updates and daily checks with opt-out. No automatic deletion."
+}

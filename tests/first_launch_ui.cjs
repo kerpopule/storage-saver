@@ -1,0 +1,10 @@
+/* Exact app script, isolated DOM seam, no server or private catalog. */
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+function element(){return {textContent:'',hidden:false,disabled:false,value:'',style:{},classList:{toggle(){},add(){},remove(){}},setAttribute(){},addEventListener(){},replaceChildren(){},append(){},showModal(){},close(){}}}
+(async()=>{let progress={state:'not_started'};const nodes=new Map();const get=s=>{if(!nodes.has(s))nodes.set(s,element());return nodes.get(s)};const cap={total_bytes:1e9,free_bytes:5e8};
+const context=vm.createContext({document:{querySelector:get,querySelectorAll:()=>[],createElement:element,createTextNode:t=>t},window:{},URL,URLSearchParams,Intl,Date,console,setTimeout,clearTimeout,setInterval(){},navigator:{},fetch:async route=>({ok:true,json:async()=>route==='/api/capacity'?cap:route==='/api/progress'?progress:{index_ready:false,state:'awaiting_first_scan',scan:null,capacity:cap,categories:[],progress}})});
+vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../web/app.js'),'utf8'),context);await new Promise(r=>setTimeout(r,20));
+assert.equal(get('#heading').textContent,'Welcome to Storage Saver');assert.equal(get('#rescan').textContent,'Start first scan');assert.equal(get('#rescan').disabled,false);assert.ok(!get('#notice').textContent.includes('database'));assert.ok(!get('#notice').textContent.includes('No completed map yet'));
+progress={state:'scanning',files:123,elapsed_seconds:4};await vm.runInContext('refresh()',context);assert.equal(get('#rescan').disabled,true);assert.equal(get('#heading').textContent,'Building your first map');
+progress={state:'error',error:'fixture failure'};await vm.runInContext('refresh()',context);assert.equal(get('#rescan').textContent,'Retry first scan');assert.equal(get('#rescan').disabled,false);assert.match(get('#notice').textContent,/did not finish/);
+console.log(JSON.stringify({passed:true,checks:['clean first launch without SQLite error','honest not-started state','visible scanning state','failed first scan retry']}));})().catch(e=>{console.error(e);process.exitCode=1});

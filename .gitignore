@@ -1,0 +1,15 @@
+/target/
+__pycache__/
+*.pyc
+/.local/
+/PLAN.md
+/CHECKPOINT.md
+*.log
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+progress.json
+.env*
+.DS_Store
+node_modules/
